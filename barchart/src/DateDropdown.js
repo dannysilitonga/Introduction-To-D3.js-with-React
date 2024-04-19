@@ -1,7 +1,7 @@
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-export default function GenderDropdown({ dateSelected }) {
+export default function DateDropdown({ dateSelected }) {
 	return (
 		<Dropdown>
 			<Dropdown.Toggle variant="primary" id="dropdown-basic">

@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ChartWrapper from './ChartWrapper';
-import GenderDropdown from './GenderDropdown';
+import DateDropdown from './DateDropdown';
 
 class App extends Component {
   state = {
@@ -21,7 +21,7 @@ class App extends Component {
         </Navbar>
         <Container>
           <Row>
-            <Col xs={12}><GenderDropdown dateSelected={this.dateSelected} /></Col>
+            <Col xs={12}><DateDropdown dateSelected={this.dateSelected} /></Col>
           </Row>
           <Row>
             <Col xs={12}><ChartWrapper date={this.state.date} /></Col>
