@@ -8,23 +8,23 @@ import GenderDropdown from './GenderDropdown';
 
 class App extends Component {
   state = {
-    gender: "men"
+    date: "march15"
   }
 
-  genderSelected = (gender) => this.setState({ gender })
+  dateSelected = (date) => this.setState({ date })
 
   render() {
     return (
       <div className="App">
         <Navbar bg="light">
-          <Navbar.Brand>Barchartly</Navbar.Brand>
+          <Navbar.Brand>Sentiment Analysis: Top Trending Videos</Navbar.Brand>
         </Navbar>
         <Container>
           <Row>
-            <Col xs={12}><GenderDropdown genderSelected={this.genderSelected} /></Col>
+            <Col xs={12}><GenderDropdown dateSelected={this.dateSelected} /></Col>
           </Row>
           <Row>
-            <Col xs={12}><ChartWrapper gender={this.state.gender} /></Col>
+            <Col xs={12}><ChartWrapper date={this.state.date} /></Col>
           </Row>
         </Container>
       </div>

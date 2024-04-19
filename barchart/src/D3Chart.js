@@ -17,14 +17,15 @@ export default class D3Chart {
 
 		vis.xLabel = vis.svg.append("text")
 			.attr("x", WIDTH / 2)
-			.attr("y", HEIGHT + 50)
+			.attr("y", HEIGHT + 80)
 			.attr("text-anchor", "middle")
+			.style("font-size", "19px")
 
 		vis.svg.append("text")
 			.attr("x", -(HEIGHT / 2))
-			.attr("y", -50)
+			.attr("y", -75)
 			.attr("text-anchor", "middle")
-			.text("Height in cm")
+			.text("Number of Views")
 			.attr("transform", "rotate(-90)")
 
 		vis.xAxisGroup = vis.svg.append("g")
@@ -37,18 +38,25 @@ export default class D3Chart {
 			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_15_04.json")
 		]).then((datasets) => {
 			
-			vis.menData = restructureData(datasets[0]).slice(0, 20)
-			console.log("mensData", vis.menData)
-			vis.womenData = restructureData(datasets[1]).slice(0,20)
-			vis.update("men")
+			vis.march15Data = restructureData(datasets[0]).slice(0, 20)
+			console.log("mensData", vis.march15Data)
+			vis.april15Data = restructureData(datasets[1]).slice(0,20)
+			vis.update("march15")
 		})
 	}
 
-	update(gender) {
+	update(date) {
 		const vis = this
 
-		vis.data = (gender == "men") ? vis.menData : vis.womenData;
-		vis.xLabel.text(`The world's tallest ${gender}`)
+		vis.data = (date == "march15") ? vis.march15Data : vis.april15Data;
+		const month = date.slice(0, -2).charAt(0).toUpperCase() + date.slice(0, -2).slice(1) 
+		const convertedDate = date.substr(date.length-2);
+		const converted_month_date = month.concat(" ", convertedDate)
+
+		//console.log("converted date month", converted_month_date)
+
+
+		vis.xLabel.text(`Top Trending Videos on ${converted_month_date}`)
 
 		const x = d3.scaleBand()
       .range([0, WIDTH])
