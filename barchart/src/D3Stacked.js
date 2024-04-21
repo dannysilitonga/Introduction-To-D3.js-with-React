@@ -34,12 +34,23 @@ export default class D3Chart {
 		vis.yAxisGroup = vis.svg.append("g")
 
 		Promise.all([
-			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_15_03.json"),
-			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_22_03.json"),
-			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_29_03.json"),
-			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_05_04.json"),
-			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/top_videos_24_15_04.json")
+			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/sentiments_24_15_03.json"),
+			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/sentiments_24_22_03.json"),
+			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/sentiments_24_29_03.json"),
+			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/sentiments_24_05_04.json"),
+			d3.json("https://sentimentviz-default-rtdb.firebaseio.com/sentiments_24_15_04.json")
 		]).then((datasets) => {
+			console.log(datasets[0]['US'])
+
+			var polarityCount = countPolarity(datasets[0])
+			console.log("the polarity count is", polarityCount);
+			
+			//const tempData = datasets[0]['US']['0AW21jPu-Wc']
+			const tempData = restrucOrigData(datasets[0])
+			console.log("tempData", tempData) 
+
+			
+			
 			
 			vis.march15Data = restructureData(datasets[0]).slice(0, 20)
 			vis.march22Data = restructureData(datasets[1]).slice(0, 20)
@@ -125,6 +136,8 @@ export default class D3Chart {
 	}
 }
 
+
+
 function restructureData(raw_data) {
 	var USAVideoCount = [];
 	for(const videoID in raw_data['US']) {
@@ -136,3 +149,96 @@ function restructureData(raw_data) {
 	USAVideoCount = USAVideoCount.sort((a,b) => (a.videoCount < b.videoCount) ? 1: -1) 
 	return USAVideoCount
 }
+
+function countPolarity(rawData){
+	var polarityCount = [];
+	var obj = {};
+	var countP = 0 ;
+	var countN = 0 ;
+	var countNe = 0 ;
+	for (const videoID in rawData['US']){
+
+		for (const user in rawData['US'][videoID]){
+			if (rawData['US'][videoID][user]['Analysis'] == 'Positive') obj[countP] = (obj[countP] || 0) + 1	
+			else if (rawData['US'][videoID][user]['Analysis'] == 'Neutral') obj[countNe] = (obj[countNe] || 0) + 1
+			else if (rawData['US'][videoID][user]['Analysis'] == 'Negative') obj[countN] = (obj[countN] || 0) + 1
+		}
+		polarityCount.push({
+			videoID: videoID,
+			polarityPositive: Number(obj[countP]),
+			polarityNeutral: Number(obj[countNe]),
+			polarityNegative: Number(obj[countNe])
+		})
+		countP=0;
+		countN=0;
+		countNe=0;
+	return polarityCount 
+	}	
+}
+
+function countPolarity2(rawData){
+	for (const videoID in rawData['US']){
+		const out = Object.values(rawData['US'][videoID].reduce((acc, {current}) => {
+			//Destructure the properites from the current object
+			const {videoID, Analysis } = current;
+			//If the object doesn't already contain an Analysis key set up a new object with
+			// empty 
+			acc[videoID] = acc[videoID] || {videoID, Analysis : []}
+			
+			// Push the analysis of the current object to analysis array
+			acc[videoID].Analysis.push(Analysis);
+
+			// Return the accumulator for the next iteration
+			return acc;
+		}, {})); 
+	}
+	//return acc;
+
+}
+
+function restrucOrigData(rawData) {
+	const newData = [];
+	for (const videoID in rawData['US']){
+		for ( const user in rawData['US'][videoID]){
+			newData.push({
+				videoID: videoID,
+				user: user,
+				analysis: rawData['US'][videoID][user]['Analysis'],
+				comments: rawData['US'][videoID][user]['Comments'],
+				polarity: rawData['US'][videoID][user]['Polarity']
+			})
+		}
+	}
+	return newData
+}
+
+
+/*
+function countPolarity2(rawData){
+	var polarityCount = [];
+	var temp = [rawData[0]];
+	for (const index = 1; index < rawData.length; index++){  //videoID in rawData['US']){
+		for (const  subindex = 1; subindex < index.length; subindex++){ //user in rawData['US'][videoID]){
+			if ( rawData[index][subindex] == rawData[index -1][subindex -1] + 1) { //rawData['US'][videoID][user]['Analysis'] == 'Positive'){
+				polarityCount.push({
+					videoID: videoID,
+					polarityPositive: countP += 1
+				})
+			} else 
+			if (rawData['US'][videoID][user]['Analysis'] == 'Neutral'){
+				polarityCount.push({
+					videoID: videoID,
+					polarityPositive: countN += 1
+				})
+			} else 
+			if (rawData['US'][videoID][user]['Analysis'] == 'Negative'){
+				polarityCount.push({
+					videoID: videoID,
+					polarityPositive: countNe += 1
+				})
+			}
+		}
+	}
+	return polarityCount 
+}
+*/
