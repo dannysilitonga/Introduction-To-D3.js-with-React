@@ -46,9 +46,38 @@ export default class D3Chart {
 			console.log("the polarity count is", polarityCount);
 			
 			//const tempData = datasets[0]['US']['0AW21jPu-Wc']
-			const tempData = restrucOrigData(datasets[0])
-			console.log("tempData", tempData) 
+			//const tempData = restrucOrigData(datasets[0])
+			//console.log("tempData", tempData)
+			
+			//const res = tempData.reduce((acc, obj) => {
+			//	const existingIndex = acc.findIndex(
+			//		el => el.videoID == obj.videoID && el.analysis == obj.analysis
+		//		)
+		//		if (existingIndex > -1) {
+		//			acc[existingIndex].count += 1
+		//		} else {
+		//			acc.push({
+		//				videoID: obj.videoID,
+		//				analysis: obj.analysis,
+		//				count: 1
+		//			})
+		//		}
+		//		return acc
+		//	}, [])
+		//	console.log("res", res)
 
+			const march15DataRestructured = restrucOrigData(datasets[0])
+			
+			const march15DataTemp = getPolarityCount(march15DataRestructured)
+
+			console.log("march 15 Data", march15DataTemp)
+
+			const res = march15DataRestructured.reduce((a, b) => {
+				const found = a.find(e => e.videoID == b.videoID);
+				return found ? found.analysis.push(b.analysis )
+
+			console.log("result", result)
+			
 			
 			
 			
@@ -210,6 +239,25 @@ function restrucOrigData(rawData) {
 		}
 	}
 	return newData
+}
+
+function getPolarityCount(rawData){
+	const res = rawData.reduce((acc, obj) => {
+		const existingIndex = acc.findIndex(
+			el => el.videoID == obj.videoID && el.analysis == obj.analysis
+		)
+		if (existingIndex > -1) {
+			acc[existingIndex].count += 1
+		} else {
+			acc.push({
+				videoID: obj.videoID,
+				analysis: obj.analysis,
+				count: 1
+			})
+		}
+		return acc
+	}, [])
+	return res
 }
 
 
