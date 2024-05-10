@@ -45,47 +45,99 @@ export default class D3Chart {
 			var polarityCount = countPolarity(datasets[0])
 			console.log("the polarity count is", polarityCount);
 			
-			//const tempData = datasets[0]['US']['0AW21jPu-Wc']
-			//const tempData = restrucOrigData(datasets[0])
-			//console.log("tempData", tempData)
-			
-			//const res = tempData.reduce((acc, obj) => {
-			//	const existingIndex = acc.findIndex(
-			//		el => el.videoID == obj.videoID && el.analysis == obj.analysis
-		//		)
-		//		if (existingIndex > -1) {
-		//			acc[existingIndex].count += 1
-		//		} else {
-		//			acc.push({
-		//				videoID: obj.videoID,
-		//				analysis: obj.analysis,
-		//				count: 1
-		//			})
-		//		}
-		//		return acc
-		//	}, [])
-		//	console.log("res", res)
+			//const march15DataTemp2 = countPolarity(datasets[0])
+			//const march22DataTemp2 = countPolarity(datasets[1])
+			//const march29DataTemp2 = countPolarity(datasets[2])
+			//const april05DataTemp2 = countPolarity(datasets[3])
+			//const april15DataTemp2 = countPolarity(datasets[4])
+			//console.log("the march polarity data", march15DataTemp2)
+
 
 			const march15DataRestructured = restrucOrigData(datasets[0])
-			
 			const march15DataTemp = getPolarityCount(march15DataRestructured)
+
+			const march22DataRestructured = restrucOrigData(datasets[1])
+			const march22DataTemp = getPolarityCount(march22DataRestructured)
+
+			const march29DataRestructured = restrucOrigData(datasets[2])
+			const march29DataTemp = getPolarityCount(march29DataRestructured)
+
+			const april05DataRestructured = restrucOrigData(datasets[3])
+			const april05DataTemp = getPolarityCount(april05DataRestructured)
+
+			const april15DataRestructured = restrucOrigData(datasets[4])
+			const april15DataTemp = getPolarityCount(april15DataRestructured)
+
 
 			console.log("march 15 Data", march15DataTemp)
 
-			const res = march15DataRestructured.reduce((a, b) => {
-				const found = a.find(e => e.videoID == b.videoID);
-				return found ? found.analysis.push(b.analysis )
+			vis.march15Data = reorganizeData(march15DataTemp).slice(0, 20); // march15DataTemp.slice(0, 20); //
+			vis.march22Data = reorganizeData(march22DataTemp).slice(0, 20); //march22DataTemp.slice(0, 20); //
+			vis.march29Data = reorganizeData(march29DataTemp).slice(0, 20); //march29DataTemp.slice(0, 20); //reorganizeData(march29DataTemp).slice(0, 20);
+			vis.april05Data = reorganizeData(april05DataTemp).slice(0, 20); //april05DataTemp.slice(0, 20); // reorganizeData(april05DataTemp).slice(0, 20);
+			vis.april15Data = reorganizeData(april15DataTemp).slice(0, 20); //april15DataTemp.slice(0, 20); //reorganizeData(april15DataTemp).slice(0, 20);
 
-			console.log("result", result)
+			console.log("april15Data", vis.april15Data)
+			//console.log("Number of Positive Comments from first video is ", vis.march15Data.find(item => item.videoID === "0AW21jPu-Wc")['sentimentData'].find(item => item.analysis === "Positive")['count'])
+			//console.log("The categories of sentiments are ", vis.march15Data.find(item => item.videoID === "0AW21jPu-Wc")['sentimentData'])
+			//var dataExp = {};
+
+
+			//var dataExp.map(( d = )
+			//	NegativeSetimentCount:vis.march15Data.flatMap(videoID => [videoID['sentimentData'].find(item => item.analysis =="Negative")['count']]) 
+			//} 
+			//vis.march15Data.flatMap(videoID => [videoID['sentimentData'].find(item => item.analysis =="Negative")['count']])
+
+			//console.log("experimental reorg", vis.march15Data.flatMap( a => [ a.sentimentData.map(b => [b.analysis, b.count, a.videoID] )]));//.map(c =>c.Negative)]));  //concat(a)] )); //[ a.sentimentData.concat(a)] ));
+			//console.log("experimental reorg2", vis.march15Data[0]['sentimentData'].find(item => item.analysis =="Negative")['count'])
+			//console.log("experimental reorg3", vis.march15Data.forEach(videoID => [ videoID.negativeSentiment = videoID['sentimentData'].find(item => item.analysis =="Negative")['count']] ))
+			//console.log("experimental reorg4", vis.march15Data.flatMap(videoID => ({NegativeCount: [videoID['sentimentData'].find(item => item.analysis =="Negative")['count']]})))
+			//console.log("experimental reorg5", dataExp)
+			//console.log("experimental reorg5", vis.march15Data.flatMap( a => [ a.sentimentData.map(b => [{b.analysis: b.count}, a.videoID] )]))
+
+			const children = [];
+			vis.march15Data.forEach(item => {
+				const dataExp = {
+					videoID: item.videoID,
+					negativeSentimentCount: item.sentimentData.find(item =>item.analysis =="Negative")['count'],
+					neutralSentimentCount: item.sentimentData.find(item =>item.analysis =="Neutral")['count'],
+					positiveSentimentCount: item.sentimentData.find(item =>item.analysis =="Positive")['count']
+				}
+				children.push(dataExp);
+			})
+			console.log("experimental reorg5", children)
+			//console.log("nexperimental reorg6", vis.march15Data.flatMap(
+			//	(elem) =>elem.sentimentData
+			//	)
+			//)
+
+			//const fn = arr => arr.flatMap(({ sentimentData, ...rest }) =>
+			//	sentimentData.map( o => ({
+		//			...rest,
+		//			...o
+		//		}))
+		//	)
+			//const DataExp2 = vis.march15Data.map(({ videoID, sentimentData }) =>
+			//	sentimentData.map( {o => ({
+			//		...rest,
+			//		...o
+			//	}))
+			//)
+		
+			//console.log('expiremental reorg5', DataExp2)
+
+
+			var newData = [];
+			for(const videoID in vis.march15Data) {
+				newData.push({
+				//videoTitle: videoID,
+				negativeSentiment: vis.march15Data.map(videoID => [videoID['sentimentData'].find(item => item.analysis =="Negative")['count']])
+				});
+			}
+			console.log("the new exp reorg4", newData)
 			
-			
-			
-			
-			vis.march15Data = restructureData(datasets[0]).slice(0, 20)
-			vis.march22Data = restructureData(datasets[1]).slice(0, 20)
-			vis.march29Data = restructureData(datasets[2]).slice(0, 20)
-			vis.april05Data = restructureData(datasets[3]).slice(0, 20)
-			vis.april15Data = restructureData(datasets[4]).slice(0,20)
+		
+
 			vis.update("march15")
 		})
 	}
@@ -111,10 +163,20 @@ export default class D3Chart {
 
 		vis.xLabel.text(`Top Trending Videos on ${converted_month_date}`)
 
+		console.log("the video data", vis.data)
+
+		const sentimentCategories = ['Negative', 'Neutral', 'Positive']
+		console.log("sentimentCategories", sentimentCategories)
+
+		// Determine the series that need to be stacked.  
+		//const series = d3.stack()
+	//		.keys(d3.union(vis.data.map(d=>d)))
+		console.log("the new data", vis.data.map(d=>d.sentimentData).map(d=>d.analysis))
+
 		const x = d3.scaleBand()
       		.range([0, WIDTH])
-      		.domain(vis.data.map((d) => d.videoTitle))
-      		.padding(0.5)
+      		.domain(vis.data.map((d) => d.videoID))
+			.padding(0.5)
     	
 		const xAxisCall = d3.axisBottom(x)
     
@@ -134,10 +196,20 @@ export default class D3Chart {
     	const yAxisCall = d3.axisLeft(y)
     	vis.yAxisGroup.transition().duration(500).call(yAxisCall)
     	console.log("hello again")
+		
+		//color palette = one color per subgroup
+		const color = d3.scaleOrdinal()
+			.domain(sentimentCategories)
+			.range(['#e41a1c','#377eb8','#4daf4a'])
+			
 
     	// DATA JOIN
     	const rects = vis.svg.selectAll("rect")
       		.data(vis.data)
+
+		const stackData = d3.stack()
+			.keys(sentimentCategories)
+			(vis.data)
 
     	// EXIT 
     	rects.exit()
@@ -191,16 +263,18 @@ function countPolarity(rawData){
 			if (rawData['US'][videoID][user]['Analysis'] == 'Positive') obj[countP] = (obj[countP] || 0) + 1	
 			else if (rawData['US'][videoID][user]['Analysis'] == 'Neutral') obj[countNe] = (obj[countNe] || 0) + 1
 			else if (rawData['US'][videoID][user]['Analysis'] == 'Negative') obj[countN] = (obj[countN] || 0) + 1
-		}
-		polarityCount.push({
-			videoID: videoID,
-			polarityPositive: Number(obj[countP]),
-			polarityNeutral: Number(obj[countNe]),
-			polarityNegative: Number(obj[countNe])
-		})
-		countP=0;
-		countN=0;
-		countNe=0;
+		}	
+	polarityCount.push({
+		videoID: videoID,
+		polarityPositive: Number(obj[countP]),
+		polarityNeutral: Number(obj[countNe]),
+		polarityNegative: Number(obj[countN])
+	})
+
+	countP=0;
+	countN=0;
+	countNe=0;
+		
 	return polarityCount 
 	}	
 }
@@ -241,6 +315,16 @@ function restrucOrigData(rawData) {
 	return newData
 }
 
+function restrucNewData(rawData) {
+	const newData = [];
+	for (const videoID in rawData){
+		newData.push({
+			videoID: rawData['videoID'],
+			negative: rawData['sentimentData'].map(e => e.analysis) //['analysis']['Negative'].map(d=>d.count)
+		})
+	}
+}
+
 function getPolarityCount(rawData){
 	const res = rawData.reduce((acc, obj) => {
 		const existingIndex = acc.findIndex(
@@ -260,6 +344,18 @@ function getPolarityCount(rawData){
 	return res
 }
 
+function reorganizeData(polarityData) {
+	const result = [ ...polarityData
+		.reduce((acc, {videoID, analysis, count}) => {
+			const group = acc.get(videoID)
+			//group ? group.sentimentData.push({analysis, count}) : acc.set(videoID, {videoID, "sentimentData":[{analysis, count}]})
+			group ? group.sentimentData.push({analysis, count}) : acc.set(videoID, {videoID, "sentimentData":[{analysis, count}]})
+			return acc
+		}, new Map)
+		.values()
+	]
+	return result 
+	}
 
 /*
 function countPolarity2(rawData){

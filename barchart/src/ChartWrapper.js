@@ -6,6 +6,7 @@ export default class ChartWrapper extends Component {
 	componentDidMount() {
 		this.setState({
 			chart: new D3Stacked(this.refs.chart)
+			//chart: new D3Chart(this.refs.chart)
 		})
 	}
 
